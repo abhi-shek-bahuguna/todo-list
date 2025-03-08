@@ -1,25 +1,85 @@
-import logo from './logo.svg';
+// App.js
 import './App.css';
-import Card from './components/Card';
 import SideBar from './components/SideBar';
 import TopBar from './components/TopBar';
-import FloatingButton from './components/FloatingButton';
 import CardContainer from './components/CardContainer'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import UserProfile from './components/UserProfile';
+import SearchPage from './components/Search';
 
 function App() {
+  const tabs =[
+    {
+      index: 0,
+      pageName: "User Profile",
+      component: UserProfile
+    },
+    {
+      index: 1,
+      pageName: "Search",
+      component: SearchPage
+    },
+    {
+      index: 2,
+      pageName: "TODO Today",
+      component: CardContainer
+    },
+    {
+      index: 3,
+      pageName: "TODO Upcoming",
+      component: CardContainer
+    }];
 
-  const [cards, setCards] = useState([]); // Store multiple cards
+  const [currentTab,setCurrentTab] =useState(0);
+
+  const setCurrentTabOnScreen=(index)=>{
+    setCurrentTab(index)
+  }
+  const ActiveTabComponent = tabs[currentTab].component;
+
+  const [allCards,setAllCards] = useState([[],[],[],[]]);
+  const [cards,setCards] = useState([]);
 
   const addCard = () => {
-    setCards([...cards, `Card ${cards.length + 1}`]); // Add a new card
-  };
+    const newCard = {
+      id:cards.length+1,
+      text:[`${new Date().toLocaleDateString()}`,`This is card ${cards.length+1}`]
+          }
+    setCards([...cards,newCard]);
+  }
+
+  const addAllCard = (index) => {
+    setAllCards(prevAllCards =>{
+    const newAllCards=[...prevAllCards];
+     // Ensure the index exists and is an array
+     if (!Array.isArray(newAllCards[index])) {
+      newAllCards[index] = []; // Initialize as an empty array if undefined
+    }
+    const newCards=[...newAllCards[index]]
+    const newCard = {
+      id:newCards.length+1,
+      text:[`${new Date().toLocaleDateString()}`,`This is card ${newCards.length+1}`]
+    }
+    newAllCards[index]=[...newCards,newCard];
+    return newAllCards;
+  })
+  }
+
+  const deleteAllCard = (index1,index2) => {
+    setAllCards(prevAllCards=>{
+      const newAllCards=[...prevAllCards];
+      const newCards=newAllCards[index1].filter( card=>
+        card.id!=index2
+      );
+      newAllCards[index1]=newCards;
+      return newAllCards;
+    })
+  }
 
   const parentDivStyle = {
     height: "100vh",
     display: "flex",
     flexDirection: "column",
-    // backgroundColor:"red"
   }
 
   const bodyDivStyle = {
@@ -28,32 +88,15 @@ function App() {
     flexDirection: "row",
   }
 
-  const floatingButtonContainerStyle = {
-    display: "flex",
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "flex-end"
-  }
 
-  const cardContainerStyle = {
-    display: "flex",
-    width: "100%",
-    // backgroundColor:"red",
-    flexDirection: "row",
-    flexWrap: "wrap",
-    maxHeight: "100%", // Fixed height to enable scrolling
-    overflowY: "auto",
-    border: "1px solid #ccc",
-    padding: "10px",
-    borderRadius: "5px",
-    boxShadow: "inset 0 4px 6px rgba(0, 0, 0, 0.1), inset 0 -4px 6px rgba(0, 0, 0, 0.1)",
-  }
   return (
     <div style={parentDivStyle}>
       <TopBar />
       <div style={bodyDivStyle}>
-        <SideBar />
-        <CardContainer />
+        <SideBar setCurrentTabOnScreen={setCurrentTabOnScreen} />
+        <div style={{width:"100%"}}>
+          <ActiveTabComponent page={tabs[currentTab].pageName} pageId={tabs[currentTab].index} cards={allCards[currentTab]} addAllCard={addAllCard} deleteAllCard={deleteAllCard}/>
+        </div>
       </div>
     </div>
   );

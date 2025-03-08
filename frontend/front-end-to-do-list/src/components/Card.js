@@ -3,7 +3,7 @@ import DeleteIconBlack from '../svg-icons/delete-icon-black.svg';
 import DeleteIconYellow from '../svg-icons/delete-icon-yellow.svg';
 import DeleteIconRed from '../svg-icons/delete-icon-red.svg';
 
-const Card = ({ id, text, deleteCard }) => {
+const Card = ({ id, pageId, text, deleteAllCard }) => {
     const [buttonImage, setButtonImage] = useState(DeleteIconBlack);
     const cardContainerStyle = {
         display: "flex",
@@ -14,7 +14,9 @@ const Card = ({ id, text, deleteCard }) => {
         boxShadow: "-10px 10px 10px rgba(0,0,0,0.3)",
         borderRadius: "10px",
         margin: "20px",
-        padding: "10px"
+        padding: "10px",
+        background:"linear-gradient(to top right,rgba(98, 255, 0, 0.55), #0072ff)",
+        transition: "transform .3s ease-out"
     }
 
     const dateContainerStyle = {
@@ -53,8 +55,18 @@ const Card = ({ id, text, deleteCard }) => {
     const handleMouseUp = (e) => {
         e.target.style.transform = "scale(1.1)"
     }
+    const cardContainerHandleMouseEnter = (e) =>{
+        e.target.style.transform ="scale(1.1)";
+        e.target.style.backgroundColor = "linear-gradient(to top right,  #0072ff, rgba(0, 200, 255, 0.55))";
+    }
+    const cardContainerHandleMouseLeave = (e) =>{
+        e.target.style.transform = "scale(1)";
+        e.target.style.backgroundColor="linear-gradient(to top right, rgba(0, 200, 255, 0.55), #0072ff)";
+    }
     return (
-        <div style={cardContainerStyle}>
+        <div style={cardContainerStyle}
+        onMouseEnter={cardContainerHandleMouseEnter}
+        onMouseLeave={cardContainerHandleMouseLeave}>
             <div style={dateContainerStyle}>{text[0]}</div>
             <div style={contentContainerStyle}>{text[1]}</div>
             <div style={buttonContainerStyle}>
@@ -64,7 +76,7 @@ const Card = ({ id, text, deleteCard }) => {
                     onMouseLeave={handleMouseLeave}
                     onMouseDown={handleMouseDown}
                     onMouseUp={handleMouseUp}
-                    onClick={() => deleteCard(id)}
+                    onClick={() => deleteAllCard(pageId, id)}
                 />
             </div>
         </div>

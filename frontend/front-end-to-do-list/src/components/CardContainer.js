@@ -1,27 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import FloatingButton from './FloatingButton';
-import Card from './Card'
+import Card from './Card';
 
-const CardContainer = () => {
-    const [cards, setCards] = useState([]);
-
-    const addCard = () => {
-        const newCard = {
-            id: cards.length + 1,
-            text: [new Date().toLocaleDateString(), `This is card number ${cards.length + 1}`]
-        }
-        setCards([...cards, newCard])
-        // console.log("card add called");
-    }
-
-    const deleteCard = (id) => {
-        setCards(cards.filter((card) => card.id !== id))
-    }
+const CardContainer = ({ page, pageId, cards, addAllCard, deleteAllCard }) => {
     const parentContainerStyle = {
         width: "100%",
         height: "100%",
-        margin: "10px"
+        margin: "10px",
     }
+    
     const cardContainerStyle = {
         display: "flex",
         flexDirection: "row",
@@ -30,22 +17,33 @@ const CardContainer = () => {
         height: "100%",
         maxHeight: "500px",
         overflowY: "auto",
-        boxShadow: "inset 4px 0 6px rgba(0, 0, 0, 0.1), inset -4px 0 6px rgba(0, 0, 0, 0.1)"
+        boxShadow: "inset 4px 0 6px rgba(0, 0, 0, 0.1), inset -4px 0 6px rgba(0, 0, 0, 0.1)",
+        background: "linear-gradient(to top right,rgba(98, 255, 0, 0.55), #0072ff)",
+        borderRadius: "10px"
     }
+    
     const floatingButtonContainerStyle = {
         position: "fixed",
         right: "20px",
         bottom: "20px"
     }
+    
     return (
         <div style={parentContainerStyle}>
+            <h2>{page}</h2>
             <div style={cardContainerStyle}>
                 {cards.map((card) => (
-                    <Card text={card.text} id={card.id} deleteCard={deleteCard} />
+                    <Card 
+                        key={card.id} 
+                        text={card.text} 
+                        id={card.id}
+                        pageId={pageId} 
+                        deleteAllCard={deleteAllCard} 
+                    />
                 ))}
             </div>
             <div style={floatingButtonContainerStyle}>
-                <FloatingButton onClick={addCard} />
+                <FloatingButton pageId ={pageId} addAllCard={addAllCard} />
             </div>
         </div>
     );
